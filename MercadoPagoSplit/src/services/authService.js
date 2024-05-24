@@ -3,9 +3,10 @@ const axios = require('axios');
 const clientId = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;
 const redirectUri = process.env.REDIRECT_URI;
+const appId = process.env.APP_ID
 
 exports.getAuthUrl = () => {
-  const authUrl = `https://auth.mercadopago.com.ar/authorization?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}`;
+  const authUrl = `https://auth.mercadopago.com.ar/authorization?client_id=${appId}&response_type=code&platform_id=mp&state=AUTORIZACIONCLIENTE&redirect_uri=${redirectUri}`;
   return authUrl;
 };
 
