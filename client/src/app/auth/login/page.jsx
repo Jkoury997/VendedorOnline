@@ -30,6 +30,7 @@ export default function Page() {
     try {
       const data = await login(email, password);
       console.log("Login successful:", data);
+      
       router.push("/dashboard");
       // Handle successful login here (e.g., redirect, show success message)
       
