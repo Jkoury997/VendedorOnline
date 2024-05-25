@@ -28,7 +28,7 @@ export default function Page() {
     }
 
     try {
-      window.location.href = `http://localhost:3001/api/auth/auth-url/${uuid}`;
+      window.location.href = `http://vps-3653258-x.dattaweb.com:3001/api/mercadopago/auth-url/${uuid}`;
     } catch (error) {
       console.error('Failed to link account:', error);
       setError('Failed to link account. Please try again later.');

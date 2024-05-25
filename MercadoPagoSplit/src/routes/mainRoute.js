@@ -4,6 +4,9 @@ const router = express.Router();
 const mercadoPagoRoute = require('./mercadoPagoRoute');
 
 router.use('/mercadopago', mercadoPagoRoute);
+router.get("/", (req, res) => {
+    res.json("Funciona");
+  });
 //router.use('/payment', paymentRoute);
 
 module.exports = router;
