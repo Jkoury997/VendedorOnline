@@ -9,7 +9,7 @@ const refreshAccessToken = async (req, res) => {
 
     try {
         const decoded = await verifyRefreshToken(token);
-        const accessToken = generateAccessToken(decoded.id);
+        const accessToken = generateAccessToken(decoded.id,decoded.uuid);
         res.status(200).json({ accessToken });
     } catch (error) {
         res.status(403).json({ message: 'Invalid refresh token' });

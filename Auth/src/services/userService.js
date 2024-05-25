@@ -1,5 +1,6 @@
 // services/userService.js
 const User = require('../database/models/User');
+const Token = require('../database/models/Token');
 const bcrypt = require("bcryptjs")
 
 const MAX_FAILED_ATTEMPTS = 3;
@@ -74,8 +75,13 @@ const getClientIp = (req) => {
     }
 };
 
+const logoutUser = async (refreshToken) => {
+    await Token.deleteOne({ token: refreshToken });
+};
+
 module.exports = {
     registerUser,
     loginUser,
-    getClientIp
+    getClientIp,
+    logoutUser
 };

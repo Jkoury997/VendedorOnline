@@ -1,12 +1,16 @@
 // utils/actions.js
-export async function assignQR(uuid) {
+"use server"
+const URL_API_QR = process.env.URL_API_QR;
+
+export async function assignQR(qrGeneralUUID) {
+    
     try {
-      const response = await fetch(`/api/some-endpoint`, {
+      const response = await fetch(`${URL_API_QR}/api/qrs/qr-general/assign`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ uuid }),
+        body: JSON.stringify({ qrGeneralUUID,userUUID }),
       });
   
       if (!response.ok) {

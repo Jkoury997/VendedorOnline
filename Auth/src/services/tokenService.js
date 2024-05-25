@@ -2,8 +2,8 @@ const jwt = require('jsonwebtoken');
 const Token = require('../database/models/Token');
 
 
-const generateAccessToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '15m' });
+const generateAccessToken = (id,uuid) => {
+    return jwt.sign({ id,uuid }, process.env.JWT_SECRET, { expiresIn: '15m' });
 };
 
 const generateRefreshToken = async (id, ip) => {

@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken';
 import { NextResponse } from 'next/server';
-import cookie from 'cookie';
+import { cookies } from 'next/headers';
 
 export async function authMiddleware(req, ev) {
   try {
+    
     const cookies = cookie.parse(req.headers.cookie || '');
     const { accessToken, refreshToken } = cookies;
 
