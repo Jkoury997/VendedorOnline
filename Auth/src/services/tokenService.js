@@ -3,7 +3,7 @@ const Token = require('../database/models/Token');
 
 
 const generateAccessToken = (id,uuid) => {
-    return jwt.sign({ id,uuid }, process.env.JWT_SECRET, { expiresIn: '15m' });
+    return jwt.sign({ id,uuid }, process.env.JWT_SECRET, { expiresIn: '1h' });
 };
 
 const generateRefreshToken = async (id, ip) => {

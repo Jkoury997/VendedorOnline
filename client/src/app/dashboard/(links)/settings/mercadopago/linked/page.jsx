@@ -1,34 +1,36 @@
 "use client"
 import { useEffect, useState } from 'react';
 import { getUserUUID } from '@/utils/getUserUUID';
+import { getAuthUrl } from '@/app/api/mercadopago/authUrl';
 
 export default function Page() {
   const [uuid, setUUID] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchUUID() {
-      try {
-        const userUUID = await getUserUUID();
-        setUUID(userUUID);
-        console.log('User UUID:', userUUID);
-      } catch (error) {
-        console.error('Failed to fetch UUID:', error);
-        setError('Failed to fetch UUID. Please try again later.');
-      }
-    }
-
     fetchUUID();
   }, []);
 
+  async function fetchUUID() {
+    try {
+      const userUUID = await getUserUUID();
+      setUUID(userUUID);
+      console.log('User UUID:', userUUID);
+    } catch (error) {
+      console.error('Failed to fetch UUID:', error);
+      setError('Failed to fetch UUID. Please try again later.');
+    }
+  }
+
   const handleLinkClick = async () => {
     if (!uuid) {
-      setError('UUID is not available');
+      setError('Por seguridad cierre sesión y vuelva a iniciar sesión');
       return;
     }
 
     try {
-      window.location.href = `http://vps-3653258-x.dattaweb.com:3001/api/mercadopago/auth-url/${uuid}`;
+      const authUrl = await getAuthUrl(uuid);
+      window.location.href = authUrl;
     } catch (error) {
       console.error('Failed to link account:', error);
       setError('Failed to link account. Please try again later.');

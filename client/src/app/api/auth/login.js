@@ -40,6 +40,11 @@ export async function login(email, password) {
 export async function logout() {
   try {
     const cookieStore = cookies();
+    const refreshToken = cookieStore.get("refreshToken");
+
+    if (!refreshToken) {
+      throw new Error("Refresh token not found");
+    }
 
     // Eliminar las cookies de los tokens
     cookieStore.set("accessToken", "", {
@@ -55,16 +60,18 @@ export async function logout() {
       expires: new Date(0),
     });
 
-    // Opcionalmente, puedes realizar una solicitud a tu API para invalidar los tokens en el servidor
+    // Realizar una solicitud a tu API para invalidar los tokens en el servidor
     const response = await fetch(`${URL_API_AUTH}/api/auth/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({ refreshToken: refreshToken.value })
     });
 
     if (!response.ok) {
-      throw new Error("Network response was not ok");
+      const errorData = await response.json();
+      throw new Error(`Network response was not ok: ${errorData.message}`);
     }
 
     return { success: true };

@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 3001;
 
 app.use(bodyParser.json());
 app.use(morgan('dev'));
+
 // Conectar a MongoDB y luego iniciar el servidor
 connectDB().then(() => {
   app.use('/api', mainRoute);

@@ -2,26 +2,31 @@ const UserMercadoPago = require('../database/models/UserMercadoPago');
 const authService = require('../services/authService');
 
 exports.authUrl = (req, res) => {
+
   const useruuid = req.params.useruuid;
   const authUrl = authService.getAuthUrl(useruuid);
-  res.redirect(authUrl);
+  res.status(200).json({authUrl: authUrl})
 };
 
 exports.callback = async (req, res) => {
   const { code, state: userUUID } = req.query;
-
+  console.log(code)
   try {
     // Intercambiar el código por un token de acceso
-    const accessToken = await authService.exchangeCodeForToken(code);
+    console.log('Exchanging code for token...');
+    const tokenData = await authService.exchangeCodeForToken(code);
+    const { access_token: accessToken, refresh_token: refreshToken } = tokenData;
 
     // Guardar o actualizar el usuario en la base de datos
+    console.log('Finding and updating user in database...');
     const user = await UserMercadoPago.findOneAndUpdate(
       { userUUID },
-      { accessToken },
+      { accessToken, refreshToken },
       { new: true, upsert: true, setDefaultsOnInsert: true }
     );
 
-    res.send('Authentication successful. You can now use the access token.');
+    console.log('User updated:', user);
+    res.status(200).json({message: 'Authentication successful. You can now use the access token.'})
   } catch (error) {
     console.error('Error exchanging code for token:', error);
     res.status(500).send('Authentication failed.');
@@ -32,16 +37,23 @@ exports.renewToken = async (req, res) => {
   const { userUUID } = req.body;
 
   try {
-    // Obtener un nuevo access token
-    const tokenData = await authService.renewAccessToken();
-    const { access_token: newAccessToken } = tokenData;
+    // Obtener el refreshToken del usuario
+    const user = await UserMercadoPago.findOne({ userUUID });
 
-    // Actualizar el usuario en la base de datos con el nuevo access token
-    const user = await UserMercadoPago.findOneAndUpdate(
-      { userUUID },
-      { accessToken: newAccessToken },
-      { new: true }
-    );
+    if (!user || !user.refreshToken) {
+      return res.status(400).json({ message: 'User not found or no refresh token available' });
+    }
+
+    // Obtener un nuevo access token
+    const tokenData = await authService.renewAccessToken(user.refreshToken);
+    const { access_token: newAccessToken, refresh_token: newRefreshToken } = tokenData;
+
+    // Actualizar el usuario en la base de datos con el nuevo access token y refresh token si está presente
+    user.accessToken = newAccessToken;
+    if (newRefreshToken) {
+      user.refreshToken = newRefreshToken;
+    }
+    await user.save();
 
     res.status(200).json({ message: 'Token renewed successfully', accessToken: newAccessToken });
   } catch (error) {

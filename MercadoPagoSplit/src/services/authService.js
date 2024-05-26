@@ -3,7 +3,7 @@ const axios = require('axios');
 const clientId = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;
 const redirectUri = process.env.REDIRECT_URI;
-const appId = process.env.APP_ID
+const appId = process.env.APP_ID;
 
 exports.getAuthUrl = (useruuid) => {
   const authUrl = `https://auth.mercadopago.com.ar/authorization?client_id=${appId}&response_type=code&platform_id=mp&state=${useruuid}&redirect_uri=${redirectUri}`;
@@ -20,16 +20,17 @@ exports.exchangeCodeForToken = async (code) => {
   params.append('redirect_uri', redirectUri);
 
   const response = await axios.post(tokenUrl, params);
-  return response.data.access_token;
+  return response.data; // Devuelve todo el objeto para incluir access_token y refresh_token
 };
 
-exports.renewAccessToken = async () => {
+exports.renewAccessToken = async (refreshToken) => {
   const tokenUrl = 'https://api.mercadopago.com/oauth/token';
   const params = new URLSearchParams();
-  params.append('grant_type', 'client_credentials');
+  params.append('grant_type', 'refresh_token');
   params.append('client_id', clientId);
   params.append('client_secret', clientSecret);
+  params.append('refresh_token', refreshToken);
 
   const response = await axios.post(tokenUrl, params);
-  return response.data;
+  return response.data; // Devuelve todo el objeto para incluir access_token y refresh_token
 };
