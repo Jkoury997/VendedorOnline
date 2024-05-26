@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from 'react';
-import {getUser} from '@/utils/getuser';
+import {getUser} from '@/utils/getUser';
 import { getAuthUrl } from '@/app/api/mercadopago/authUrl';
 
 export default function Page() {
