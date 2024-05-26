@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from 'react';
-import {getUserUUID} from '@/utils/getUserUUID';
+import {getUser} from '@/utils/getuser';
 import { getAuthUrl } from '@/app/api/mercadopago/authUrl';
 
 export default function Page() {
@@ -13,7 +13,7 @@ export default function Page() {
 
   async function fetchUUID() {
     try {
-      const userUUID = await getUserUUID();
+      const userUUID = await getUser();
       setUUID(userUUID);
       console.log('User UUID:', userUUID);
     } catch (error) {

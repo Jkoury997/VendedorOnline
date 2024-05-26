@@ -5,7 +5,7 @@ import { refreshAccessToken } from './refreshToken';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export async function getUserUUID() {
+export async function getUser() {
     const cookieStore = cookies();
     let accessToken = cookieStore.get("accessToken");
     const refreshToken = cookieStore.get("refreshToken");
