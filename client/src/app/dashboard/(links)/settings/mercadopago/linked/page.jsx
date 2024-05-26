@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from 'react';
-import { getUserUUID } from '../../../../../../utils/getUserUUID'
+import getUserUUID from '@/utils/getUserUUID';
 import { getAuthUrl } from '@/app/api/mercadopago/authUrl';
 
 export default function Page() {
