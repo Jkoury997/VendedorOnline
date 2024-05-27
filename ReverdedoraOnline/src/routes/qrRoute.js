@@ -16,4 +16,10 @@ router.get('/qr-linked-data/:qr_uuid', qrController.getQRLinkedData);
 
 router.get('/validate-qr/:qr_uuid', qrController.validateQR);
 
+// Ruta para obtener la lista de QR generales vinculados a un usuario
+router.get('/qr-general/list/:userUUID', qrController.listQRGeneralsByUser);
+
+
+
+
 module.exports = router;

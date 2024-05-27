@@ -145,11 +145,21 @@ const validateQR = async (qr_uuid) => {
   }
 };
 
+const listQRGeneralsByUser = async (userUUID) => {
+  try {
+    const qrGenerals = await QRGeneral.find({ user_uuid: userUUID });
+    return qrGenerals;
+  } catch (error) {
+    console.error('Error al listar los QR generales por usuario:', error);
+    throw new Error('Error al listar los QR generales por usuario');
+  }
+};
 
 module.exports = {
   createQRGeneral,
   assignQRGeneralToUser,
   createOrUpdateQRLinkedData,
   getQRLinkedData,
-  validateQR
+  validateQR,
+  listQRGeneralsByUser
 };

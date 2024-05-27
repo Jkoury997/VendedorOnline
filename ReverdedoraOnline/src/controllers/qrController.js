@@ -52,10 +52,21 @@ const validateQR = async (req, res) => {
   }
 };
 
+const listQRGeneralsByUser = async (req, res) => {
+  const { userUUID } = req.params;
+  try {
+    const qrGenerals = await qrService.listQRGeneralsByUser(userUUID);
+    res.status(200).json({ userUUID, qrGenerals });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createQRGeneral,
   assignQRGeneralToUser,
   getQRLinkedData,
   createOrUpdateQRLinkedData,
-  validateQR
+  validateQR,
+  listQRGeneralsByUser
 };
