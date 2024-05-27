@@ -1,9 +1,18 @@
 // pages/api/qr/assign-qr.js
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 
 const URL_API_QR = process.env.URL_API_QR;
 
 export async function POST(req) {
+
+  const cookieStore = cookies();
+  const accessToken = cookieStore.get("accessToken");
+
+  if (!accessToken) {
+    return NextResponse.json({ message: 'Access token not found' }, { status: 401 });
+  }
+
   try {
     const { qrGeneralUUID, userUUID } = await req.json();
 
@@ -11,6 +20,7 @@ export async function POST(req) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken.value}`
       },
       body: JSON.stringify({ qrGeneralUUID, userUUID }),
     });
