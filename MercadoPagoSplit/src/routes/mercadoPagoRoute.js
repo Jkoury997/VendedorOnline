@@ -7,4 +7,6 @@ router.get("/callback",authController.callback)
 
 router.post('/renew-token', authController.renewToken);
 
+router.get("/verify-user-creation/:useruuid",authController.verifyUserCreation)
+
 module.exports = router;

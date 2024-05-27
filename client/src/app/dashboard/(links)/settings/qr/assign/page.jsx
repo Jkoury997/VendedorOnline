@@ -2,21 +2,33 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-
-import { Alert,AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { TriangleAlertIcon } from "lucide-react";
-import { assignQR } from "@/app/api/qr/assign";
-
+import { getUser } from "@/utils/auth";
+import { assignQR } from "@/utils/qr"; // Asegúrate de que esta importación sea correcta
 
 // Importar react-qr-scanner dinámicamente para evitar problemas con SSR
 const QrScanner = dynamic(() => import("react-qr-scanner"), { ssr: false });
 
 export default function Page() {
+  const [userUUID, setUserUUID] = useState(null);
   const [scanResult, setScanResult] = useState(null);
   const [error, setError] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
+    // Obtener el userUUID cuando el componente se monte
+    async function fetchUserUUID() {
+      try {
+        const uuid = await getUser();
+        setUserUUID(uuid);
+      } catch (err) {
+        setError("Error al obtener el UUID del usuario. Por favor, intenta nuevamente.");
+      }
+    }
+
+    fetchUserUUID();
+
     // Verificar si el contexto es seguro (HTTPS)
     if (window.isSecureContext) {
       // Verificar la disponibilidad de la API getUserMedia
@@ -38,10 +50,11 @@ export default function Page() {
 
   const handleScan = async (data) => {
     if (data) {
-      const uuid = data.text;
-      setScanResult(uuid);
+      const qrGeneralUUID = data.text;
+      setScanResult(qrGeneralUUID);
       try {
-        await assignQR(uuid);
+        await assignQR(qrGeneralUUID, userUUID);
+        router.push('/success-page'); // Redirige a una página de éxito si es necesario
       } catch (err) {
         setError("Error al realizar la acción con el UUID. Por favor, intenta nuevamente.");
       }
@@ -76,7 +89,6 @@ export default function Page() {
                 <TriangleAlertIcon className="h-4 w-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
-
             ) : (
               <QrScanner
                 delay={300}
@@ -98,5 +110,3 @@ export default function Page() {
     </section>
   );
 }
-
-

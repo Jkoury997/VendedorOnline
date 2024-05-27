@@ -1,11 +1,13 @@
-"use client"
+"use client";
 import { useEffect, useState } from 'react';
-import {getUser} from '@/utils/getUser';
-import { getAuthUrl } from '@/app/api/mercadopago/authUrl';
+import { getUser } from '@/utils/auth';
+import { verifyUserCreation, getAuthUrl } from '@/utils/mercadopago';
 
 export default function Page() {
   const [uuid, setUUID] = useState(null);
   const [error, setError] = useState(null);
+  const [isVerified, setIsVerified] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchUUID();
@@ -16,9 +18,15 @@ export default function Page() {
       const userUUID = await getUser();
       setUUID(userUUID);
       console.log('User UUID:', userUUID);
+
+      // Verificar si el usuario está creado en la base de datos
+      const verified = await verifyUserCreation(userUUID);
+      setIsVerified(verified);
     } catch (error) {
       console.error('Failed to fetch UUID:', error);
       setError('Failed to fetch UUID. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -49,12 +57,16 @@ export default function Page() {
               Recibe pagos de forma segura y rápida directamente en tu cuenta de Mercado Pago.
             </p>
           </div>
-          <button
-            className="inline-flex h-10 items-center justify-center rounded-md bg-gray-900 px-8 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300"
-            onClick={handleLinkClick}
-          >
-            Vincular cuenta
-          </button>
+          {!loading && !isVerified && (
+            <button
+              className="inline-flex h-10 items-center justify-center rounded-md bg-gray-900 px-8 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300"
+              onClick={handleLinkClick}
+            >
+              Vincular cuenta
+            </button>
+          )}
+          {isVerified && <p className="text-green-500">Usuario verificado. No es necesario vincular.</p>}
+          {loading && <p className="text-gray-500">Verificando usuario...</p>}
         </div>
         {error && <p className="text-red-500">{error}</p>}
       </div>

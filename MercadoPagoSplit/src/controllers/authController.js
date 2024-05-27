@@ -61,3 +61,15 @@ exports.renewToken = async (req, res) => {
     res.status(500).json({ message: 'Failed to renew token' });
   }
 };
+
+exports.verifyUserCreation = async (req, res) => {
+  const { useruuid } = req.params;
+  try {
+    const isCreated = await authService.isUserCreated(useruuid);
+    res.status(200).json({ isCreated });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to verify user creation' });
+  }
+};
+
+

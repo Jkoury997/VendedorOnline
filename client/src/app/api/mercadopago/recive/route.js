@@ -31,11 +31,14 @@ export async function GET(req) {
 
     const externalData = await response.json();
 
-    // Responder con un mensaje de éxito y los datos recibidos de la API externa
-    return new Response(JSON.stringify({ message: 'Data received successfully', data: externalData }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+  // Redirigir al dashboard
+  const dashboardUrl = '/dashboard'; // Cambia esta URL a la de tu dashboard
+  return new Response(null, {
+    status: 302,
+    headers: {
+      'Location': dashboardUrl,
+    },
+  });
   } catch (error) {
     console.error('Error handling request:', error);
     return new Response(JSON.stringify({ message: 'Internal server error' }), {
