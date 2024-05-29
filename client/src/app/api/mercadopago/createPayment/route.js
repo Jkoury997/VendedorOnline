@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { v4 as uuidv4 } from 'uuid';
+
 
 const URL_API_MERCADOPAGO = process.env.URL_API_MERCADOPAGO;
 
@@ -14,13 +16,14 @@ export async function GET(req) {
   if (!accessToken) {
     return NextResponse.json({ message: 'Access token not found' }, { status: 401 });
   }
+  const idempotencyKey = await uuidv4(); 
 
   try {
     const response = await fetch(`${URL_API_MERCADOPAGO}/api/payments/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Idempotency-Key': "123",
+        'X-Idempotency-Key': idempotencyKey,
         'Authorization': `Bearer ${accessToken.value}`,
       },
       body: JSON.stringify({amount, userUUID, revendedorAmount })
