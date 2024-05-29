@@ -30,7 +30,7 @@ const Page = () => {
             {error && <div>{error}</div>}
             {preferenceId ? (
                 <Wallet 
-                    initialization={{ preferenceId, redirectMode: 'blank'  }} 
+                    initialization={{ preferenceId: preferenceId, redirectMode: 'blank'  }} 
                     customization={{ texts: { valueProp: 'smart_option' } }}
 
                 />
