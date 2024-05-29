@@ -20,6 +20,7 @@ export async function GET(req) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-Idempotency-Key': "123",
         'Authorization': `Bearer ${accessToken.value}`,
       },
       body: JSON.stringify({amount, userUUID, revendedorAmount })

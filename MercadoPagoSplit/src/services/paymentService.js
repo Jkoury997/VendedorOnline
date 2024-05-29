@@ -5,7 +5,7 @@ const authService = require("./authService")
 
 const UserMercadoPago = require('../database/models/UserMercadoPago');
 
-const createPreference = async (amount, userUUID, revendedorAmount) => {
+const createPreference = async (amount, userUUID, revendedorAmount,idempotencyKey) => {
 
     let revendedor = await UserMercadoPago.findOne({ userUUID });
 
@@ -22,23 +22,29 @@ const createPreference = async (amount, userUUID, revendedorAmount) => {
 
 
 
-    const preferenceData = {
-        body: {
+    const body = {
           items: [
             {
                 id: "asdaf34123",
               title: 'Mi producto',
               quantity: 1,
-              unit_price: 2000
+              unit_price: 2000,
+              currency_id:"ARS",
             }
           ],
           payment_method_id: 'master',
           marketplace_fee: 10,
-          purpose: 'wallet_purchase'
+          purpose: 'wallet_purchase',
+          back_url:{
+            success: "https://marcelakoury.com",
+            failure: "https://marcelakoury.com",
+            pending: "https://marcelakoury.com",
+          },
+          auto_return:"approved"
         }
-      };
 
-      const response = await preference.create(preferenceData);
+
+      const response = await preference.create({body,idempotencyKey});
     return response;
   } catch (error) {
     console.error('Error creando la preferencia de pago:', error);
