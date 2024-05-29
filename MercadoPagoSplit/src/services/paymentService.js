@@ -32,6 +32,7 @@ const createPreference = async (amount, userUUID, revendedorAmount) => {
               unit_price: 2000
             }
           ],
+          payment_method_id: 'master',
           marketplace_fee: 10,
           purpose: 'wallet_purchase'
         }
