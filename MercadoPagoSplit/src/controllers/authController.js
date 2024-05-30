@@ -10,24 +10,38 @@ exports.authUrl = (req, res) => {
 
 exports.callback = async (req, res) => {
   const { code, state: userUUID } = req.query;
-  console.log(code)
+
   try {
     // Intercambiar el código por un token de acceso
-    console.log('Exchanging code for token...');
     const tokenData = await authService.exchangeCodeForToken(code);
-    console.log(tokenData)
-    const { access_token: accessToken, refresh_token: refreshToken } = tokenData;
+    const {
+      access_token: accessToken,
+      token_type: tokenType,
+      expires_in: expiresIn,
+      scope,
+      user_id: userId,
+      refresh_token: refreshToken,
+      public_key: publicKey,
+      live_mode: liveMode,
+    } = tokenData;
 
     // Guardar o actualizar el usuario en la base de datos
-    console.log('Finding and updating user in database...');
     const user = await UserMercadoPago.findOneAndUpdate(
       { userUUID },
-      { accessToken, refreshToken },
+      {
+        accessToken,
+        refreshToken,
+        tokenType,
+        expiresIn,
+        scope,
+        userId,
+        publicKey,
+        liveMode,
+      },
       { new: true, upsert: true, setDefaultsOnInsert: true }
     );
 
-    console.log('User updated:', user);
-    res.status(200).json({message: 'Authentication successful. You can now use the access token.'})
+    res.status(200).json({ message: 'Authentication successful. You can now use the access token.' });
   } catch (error) {
     console.error('Error exchanging code for token:', error);
     res.status(500).send('Authentication failed.');
