@@ -28,6 +28,7 @@ export async function login(email, password) {
     // Almacenar los tokens en las cookies
     cookieStore.set("accessToken",data.accessToken)
     cookieStore.set("refreshToken",data.refreshToken)
+    cookieStore.set("useruuid",data.user.uuid)
     
 
     return data;
@@ -54,6 +55,12 @@ export async function logout() {
       expires: new Date(0),
     });
     cookieStore.set("refreshToken", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      expires: new Date(0),
+    });
+    cookieStore.set("useruuid", "", {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       path: '/',
