@@ -16,7 +16,7 @@ const createPreference = async (amount, userUUID, revendedorAmount,idempotencyKe
 
 
     try {
-    let client = new MercadoPagoConfig({ accessToken: process.env.ACCESS_TOKEN});
+    let client = new MercadoPagoConfig({ accessToken: newRevendedoraAccessToken});
 
     let preference = new Preference(client);
 
@@ -40,14 +40,15 @@ const createPreference = async (amount, userUUID, revendedorAmount,idempotencyKe
             failure: "https://marcelakoury.com",
             pending: "https://marcelakoury.com",
           },
-          token: newRevendedoraAccessToken,
+
           auto_return:"approved",
-          application_fee: 300,
-          transaction_amount: 2000,
+          marketplace: process.env.ACCESS_TOKEN,
+          marketplace_fee: 500
         }
 
 
       const response = await preference.create({body,idempotencyKey});
+      console.log(response)
       return response;
   } catch (error) {
     console.error('Error creando la preferencia de pago:', error);
