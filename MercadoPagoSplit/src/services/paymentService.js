@@ -31,10 +31,16 @@ const createPreference = async (amount, userUUID, revendedorAmount,idempotencyKe
               quantity: 1,
               unit_price: 2000,
               currency_id:"ARS",
-            }
+            },
+            {
+              id: "asdaf34233",
+            title: 'Mi producto',
+            quantity: 1,
+            unit_price: 2000,
+            currency_id:"ARS",
+          }
           ],
           payment_method_id: 'master',
-          purpose: 'wallet_purchase',
           back_urls:{
             success: "https://marcelakoury.com",
             failure: "https://marcelakoury.com",
@@ -43,7 +49,7 @@ const createPreference = async (amount, userUUID, revendedorAmount,idempotencyKe
 
           auto_return:"approved",
           marketplace: process.env.ACCESS_TOKEN,
-          marketplace_fee: 500
+          marketplace_fee: 3800,
         }
 
 

@@ -6,7 +6,10 @@ import { createPayment } from '@/utils/mercadopago';
 import { getUser } from '@/utils/auth';
 
 const Page = () => {
-    initMercadoPago(process.env.NEXT_PUBLIC_MP_PUBLIC_KEY, { locale: 'es-AR' });
+    const NEXT_PUBLIC_MP_PUBLIC_KEY = process.env.NEXT_PUBLIC_MP_PUBLIC_KEY
+    console.log(NEXT_PUBLIC_MP_PUBLIC_KEY)
+    initMercadoPago(NEXT_PUBLIC_MP_PUBLIC_KEY, { locale: 'es-AR' });
+    
 
     const [preferenceId, setPreferenceId] = useState(null);
     const [error, setError] = useState(null);
