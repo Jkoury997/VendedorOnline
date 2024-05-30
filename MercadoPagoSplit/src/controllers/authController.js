@@ -15,6 +15,7 @@ exports.callback = async (req, res) => {
     // Intercambiar el código por un token de acceso
     console.log('Exchanging code for token...');
     const tokenData = await authService.exchangeCodeForToken(code);
+    console.log(tokenData)
     const { access_token: accessToken, refresh_token: refreshToken } = tokenData;
 
     // Guardar o actualizar el usuario en la base de datos

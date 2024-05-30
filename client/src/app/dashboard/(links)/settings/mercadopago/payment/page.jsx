@@ -6,11 +6,12 @@ import { createPayment } from '@/utils/mercadopago';
 import { getUser } from '@/utils/auth';
 
 const Page = () => {
+    initMercadoPago(process.env.NEXT_PUBLIC_MP_PUBLIC_KEY, { locale: 'es-AR' });
+
     const [preferenceId, setPreferenceId] = useState(null);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        initMercadoPago(process.env.NEXT_PUBLIC_MP_PUBLIC_KEY, { locale: 'es-AR' });
         fetchCreatePayment();
     }, []);
 
@@ -18,22 +19,34 @@ const Page = () => {
         try {
             const userUUID = await getUser(); // Asumiendo que getUser es una función que obtiene el UUID del usuario
             const response = await createPayment(2000, userUUID, 300);
-            setPreferenceId(response.paymentLink.id);
+            if (response && response.paymentLink.id) {
+                setPreferenceId(response.paymentLink.id);
+            } else {
+                throw new Error('Invalid response from createPayment');
+            }
         } catch (err) {
             setError("Error al crear el preference id.");
             console.error('Error al crear el preference id:', err);
         }
     }
 
+    useEffect(() => {
+        if (preferenceId) {
+            console.log('Preference ID:', preferenceId);
+        }
+    }, [preferenceId]);
+
     return (
         <div>
             {error && <div>{error}</div>}
             {preferenceId ? (
-                <Wallet 
-                    initialization={{ preferenceId: preferenceId, redirectMode: 'blank'  }} 
-                    customization={{ texts: { valueProp: 'smart_option' } }}
-
-                />
+                <>
+                    <p>{preferenceId}</p>
+                    <Wallet 
+                        initialization={{ preferenceId: preferenceId, redirectMode: 'modal' }} 
+                        customization={{ texts: { valueProp: 'smart_option' } }}
+                    />
+                </>
             ) : (
                 <div>Cargando...</div>
             )}

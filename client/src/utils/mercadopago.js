@@ -38,6 +38,7 @@ export async function createPayment(amount, userUUID, revendedorAmount ){
       throw new Error('Failed to verify user creation');
     }
     const data = await response.json();
+    console.log(data)
     return data
   }catch (error) {
     console.error('Error create payment:', error);
