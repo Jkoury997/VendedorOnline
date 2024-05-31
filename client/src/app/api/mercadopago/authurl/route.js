@@ -2,36 +2,29 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
-const URL_API_MERCADOPAGO = process.env.URL_API_MERCADOPAGO;
+const MERCADOPAGO_CLIENT_ID = process.env.MERCADOPAGO_CLIENT_ID;
+const MERCADOPAGO_REDIRECT_URI = process.env.MERCADOPAGO_REDIRECT_URI;
+const MERCADOPAGO_APP_ID = process.env.MERCADOPAGO_APP_ID
 
 export async function GET(req) {
-  const { searchParams } = new URL(req.url);
-  const useruuid = searchParams.get('useruuid');
-  console.log(useruuid);
 
   const cookieStore = cookies();
   const accessToken = cookieStore.get("accessToken");
+  const useruuid = cookieStore.get("useruuid")
 
   if (!accessToken) {
     return NextResponse.json({ message: 'Access token not found' }, { status: 401 });
   }
+  if (!useruuid) {
+    return NextResponse.json({ message: 'Access token not found' }, { status: 401 });
+  }
 
   try {
-    const response = await fetch(`${URL_API_MERCADOPAGO}/api/mercadopago/auth-url/${useruuid}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken.value}`
-      }
-    });
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch auth URL');
-    }
+    const authUrl = `https://auth.mercadopago.com.ar/authorization?response_type=code&client_id=${MERCADOPAGO_APP_ID}&redirect_uri=${MERCADOPAGO_REDIRECT_URI}&state=${useruuid.value}`;
 
-    const data = await response.json();
-    console.log(data);
-    return NextResponse.json({ authUrl: data.authUrl }, { status: 200 });
+
+    return NextResponse.json({ authUrl: authUrl }, { status: 200 });
   } catch (error) {
     console.error('Error fetching auth URL:', error);
     return NextResponse.json({ message: 'Failed to fetch auth URL' }, { status: 500 });

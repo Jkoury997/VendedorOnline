@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 
-const URL_API_MERCADOPAGO = process.env.URL_API_MERCADOPAGO
+const URL_API_AUTH = process.env.URL_API_AUTH
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
@@ -9,6 +9,7 @@ export async function GET(req) {
 
   const cookieStore = cookies();
   const accessToken = cookieStore.get('accessToken');
+  const useruuid = cookieStore.get('useruuid');
 
   try {
 
@@ -17,7 +18,7 @@ export async function GET(req) {
     }
     
     // Hacer una solicitud a la API externa con encabezado de autorización
-    const response = await fetch(`${URL_API_MERCADOPAGO}/api/mercadopago/callback?code=${code}&state=${state}`, {
+    const response = await fetch(`${URL_API_AUTH}/api/mercadopago/user/callback?code=${code}&state=${state}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -31,14 +32,14 @@ export async function GET(req) {
 
     const externalData = await response.json();
 
-  // Redirigir al dashboard
-  const dashboardUrl = '/dashboard'; // Cambia esta URL a la de tu dashboard
-  return new Response(null, {
-    status: 302,
-    headers: {
-      'Location': dashboardUrl,
-    },
-  });
+    // Redirigir al dashboard
+    const dashboardUrl = '/dashboard'; // Cambia esta URL a la de tu dashboard
+    return new Response(null, {
+      status: 302,
+      headers: {
+        'Location': dashboardUrl,
+      },
+    });
   } catch (error) {
     console.error('Error handling request:', error);
     return new Response(JSON.stringify({ message: 'Internal server error' }), {

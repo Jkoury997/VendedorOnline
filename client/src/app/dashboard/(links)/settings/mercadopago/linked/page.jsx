@@ -4,7 +4,6 @@ import { getUser } from '@/utils/auth';
 import { verifyUserCreation, getAuthUrl } from '@/utils/mercadopago';
 
 export default function Page() {
-  const [uuid, setUUID] = useState(null);
   const [error, setError] = useState(null);
   const [isVerified, setIsVerified] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -15,12 +14,8 @@ export default function Page() {
 
   async function fetchUUID() {
     try {
-      const userUUID = await getUser();
-      setUUID(userUUID);
-      console.log('User UUID:', userUUID);
-
       // Verificar si el usuario está creado en la base de datos
-      const verified = await verifyUserCreation(userUUID);
+      const verified = await verifyUserCreation();
       setIsVerified(verified);
     } catch (error) {
       console.error('Failed to fetch UUID:', error);
@@ -31,13 +26,9 @@ export default function Page() {
   }
 
   const handleLinkClick = async () => {
-    if (!uuid) {
-      setError('Por seguridad cierre sesión y vuelva a iniciar sesión');
-      return;
-    }
 
     try {
-      const authUrl = await getAuthUrl(uuid);
+      const authUrl = await getAuthUrl();
       window.location.href = authUrl;
     } catch (error) {
       console.error('Failed to link account:', error);

@@ -1,25 +1,23 @@
 // utils/mercadopago.js
 
-export async function getAuthUrl(useruuid) {
-    const response = await fetch(`/api/mercadopago/authurl?useruuid=${useruuid}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    });
-  
+export async function getAuthUrl (){
+  try{
+    const response = await fetch(`/api/mercadopago/authurl`)
     if (!response.ok) {
-      throw new Error('Failed to fetch auth URL');
+      throw new Error('Failed to verify user creation');
     }
-  
     const data = await response.json();
-    console.log(data);
-    return data.authUrl;
+    console.log(data)
+    return data.authUrl
+  } catch (error) {
+    console.error('Error get auth utl:', error);
+    return false;
   }
+}
   
-  export async function verifyUserCreation(userUUID) {
+export async function verifyUserCreation() {
     try {
-      const response = await fetch(`/api/mercadopago/verifyUserCreation?userUUID=${userUUID}`);
+      const response = await fetch(`/api/mercadopago/verifyUserCreation`);
       if (!response.ok) {
         throw new Error('Failed to verify user creation');
       }
@@ -30,6 +28,7 @@ export async function getAuthUrl(useruuid) {
       return false;
     }
   }
+
 
 export async function createPayment(amount, userUUID, revendedorAmount ){
   try{
